@@ -1,11 +1,11 @@
 /* Definición de la paleta de colores pastel (Fairycore suave en tonos rosas y morados) */
 :root {
-    --color-pastel-bg: #F7F2F6; /* Fondo principal muy claro (casi blanco con tinte lila) */
+    --color-pastel-bg: #F7F2F6; /* Fondo principal muy claro */
     --color-pastel-header: #DBCDF0; /* Lavanda suave (Header) */
-    --color-pastel-card: #FFFAFA; /* Crema/Blanco muy claro (Ramo base) */
-    --color-pastel-approved: #F1D3D3; /* Rosa pálido suave (Aprobado) */
-    --color-pastel-blocked: #E0BBE4; /* Lila/Orquídea claro (Bloqueado) */
     --color-text-main: #5A486F; /* Púrpura oscuro para legibilidad */
+    --color-line: #E0BBE4; /* Lila/Orquídea claro para las líneas */
+    --color-approved-text: #A36F8B; /* Malva oscuro para aprobados */
+    --color-blocked-text: #8E44AD; /* Púrpura más vibrante para bloqueo */
 }
 
 body {
@@ -20,68 +20,131 @@ body {
     color: var(--color-text-main);
 }
 
-/* Estilo para las tarjetas de cursos (ramos) */
-.course-card {
-    transition: all 0.3s ease-in-out;
-    cursor: pointer;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05); /* Sombra suave */
-    border: 1px solid rgba(219, 205, 240, 0.5); /* Borde sutil del color del header */
-    background-color: var(--color-pastel-card);
+/* --- Estilo de Malla Vertical (Similar a la imagen) --- */
+
+/* Contenedor de cada columna de semestre */
+.semester-column {
+    display: flex;
+    flex-direction: column;
+    /* Eliminar el espacio interno entre ramos para que estén pegados a la línea */
+    gap: 0; 
+    position: relative;
+    padding-top: 1rem; /* Espacio para el título del semestre */
 }
+
+/* Título del Semestre: Borde inferior para separar del cuerpo */
+.semester-title {
+    text-align: center;
+    padding: 0 0 1rem 0; 
+    font-size: 1rem; 
+    font-weight: 700;
+    color: var(--color-text-main);
+    border-bottom: 2px solid var(--color-line);
+    margin-bottom: 0.5rem;
+}
+
+/* --- Estilo de la Tarjeta (Ramo) como línea/lista --- */
+.course-card {
+    transition: all 0.2s ease-in-out;
+    cursor: pointer;
+    background-color: transparent; /* Fondo transparente */
+    padding: 0.5rem 0.5rem 0.5rem 1rem; /* Padding a la izquierda para el efecto de línea */
+    position: relative;
+    border-radius: 0;
+    box-shadow: none;
+    line-height: 1.2;
+}
+
+/* Línea Vertical (Se crea con un pseudo-elemento en el contenedor del semestre) */
+.semester-column::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%; /* Centrar la línea vertical en la columna */
+    bottom: 0;
+    width: 2px; /* Grosor de la línea */
+    background-color: var(--color-line);
+    z-index: 1; /* Asegurar que la línea esté debajo de los ramos */
+}
+
+/* Pequeña marca horizontal al inicio de cada ramo (El "tick" en la línea) */
+.course-card::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 8px; /* Tamaño del punto/marca */
+    height: 8px;
+    background-color: var(--color-line);
+    border-radius: 50%;
+    z-index: 2; /* Sobre la línea vertical */
+    transition: background-color 0.2s;
+}
+
+/* --- ESTADOS --- */
 
 /* Estado APROBADO */
 .approved {
-    background-color: var(--color-pastel-approved) !important;
-    color: #6B4E5E; /* Texto morado oscuro para contraste */
-    text-decoration: line-through;
-    opacity: 0.8;
+    color: var(--color-approved-text) !important;
+    text-decoration: none; /* Mantener la decoración limpia, pero cambiar el color */
+    opacity: 1;
     pointer-events: none;
-    transform: scale(0.98);
+    transform: none;
+    font-weight: 600; /* Ligeramente más grueso para destacar */
 }
 
-/* Estado BLOQUEADO (Ramos que no cumplen requisitos) */
+.approved::before {
+    background-color: var(--color-approved-text);
+    /* Borde blanco para darle un efecto de "check" sutil */
+    border: 2px solid var(--color-pastel-bg);
+    width: 10px;
+    height: 10px;
+}
+
+/* Estado BLOQUEADO */
 .blocked {
-    background-color: var(--color-pastel-blocked) !important;
-    color: #8E44AD; /* Púrpura más vibrante para indicar bloqueo */
-    opacity: 0.9;
-    animation: pulse-blocked 1.5s infinite; 
+    color: var(--color-blocked-text) !important;
+    opacity: 0.8;
+    pointer-events: auto; /* Permitir el click para mostrar el mensaje */
+    animation: none; /* Eliminar animación de pulso */
 }
 
-@keyframes pulse-blocked {
-    /* Usando el color lila/morado para el pulso */
-    0% { box-shadow: 0 0 0 0 rgba(142, 68, 173, 0.2); }
-    70% { box-shadow: 0 0 0 5px rgba(142, 68, 173, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(142, 68, 173, 0); }
+.blocked::before {
+    background-color: var(--color-blocked-text);
 }
 
-/* Estilos específicos para la Práctica Laboral */
+/* Estado Normal (Disponible) */
+.course-card:not(.approved):not(.blocked):hover {
+    background-color: rgba(219, 205, 240, 0.2); /* Lavanda muy suave al pasar el ratón */
+    transform: translateX(3px);
+}
+.course-card:not(.approved):not(.blocked):active {
+    background-color: rgba(219, 205, 240, 0.4);
+}
+
+/* Estilos específicos para la Práctica Laboral (Misma lógica, pero con color de línea distinto) */
 .practica-card {
-    background-color: #A36F8B; /* Malva más oscuro y elegante */
-    color: white;
+    color: #A36F8B; 
     font-weight: bold;
 }
+.practica-card::before {
+    background-color: #A36F8B;
+}
 
-/* Estilos para el contenedor del mensaje de error/bloqueo */
+/* Estilos para el mensaje de bloqueo */
 #message-box {
     z-index: 50;
     transition: opacity 0.3s, transform 0.3s;
     transform: translateY(20px);
     opacity: 0;
     pointer-events: none;
-    /* Estilos por defecto del mensaje de bloqueo: Usando tonos rojos/rosas para el error */
-    background-color: #fff0f5; /* Más claro */
-    border-color: #ffc0cb; /* Rosa */
+    background-color: #fff0f5;
+    border-color: #ffc0cb;
 }
 
 #message-box.show {
     transform: translateY(0);
     opacity: 1;
     pointer-events: auto;
-}
-
-/* Estilos para las columnas de semestres */
-.semester-column {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
 }
