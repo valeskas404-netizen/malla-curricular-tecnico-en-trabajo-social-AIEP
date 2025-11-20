@@ -107,17 +107,13 @@ function showMessage(type, message) {
     const msgBox = document.getElementById('message-box');
     const msgContent = document.getElementById('message-content');
     
-    // Configurar clases específicas para el mensaje de bloqueo
     if (type === 'blocked') {
-        // Se asume que los estilos base están en CSS (bg-red-100, border-red-400)
         document.querySelector('#message-box p').textContent = 'Ramo Bloqueado';
         msgContent.innerHTML = message;
     }
 
-    // Mostrar el mensaje
     msgBox.classList.add('show');
 
-    // Ocultar mensaje después de 4 segundos
     clearTimeout(messageTimeout);
     messageTimeout = setTimeout(() => {
         msgBox.classList.remove('show');
@@ -141,11 +137,12 @@ function renderCurriculum() {
         const semesterCourses = coursesBySemester[semester];
         
         const semesterColumn = document.createElement('div');
-        semesterColumn.className = 'flex flex-col space-y-4 semester-column';
+        // Usamos la clase CSS 'semester-column' para la línea vertical
+        semesterColumn.className = 'semester-column'; 
         
-        // Título del Semestre
+        // Título del Semestre: Usamos 'semester-title' para el borde inferior
         const title = document.createElement('h2');
-        title.className = 'text-xl font-bold text-center p-2 rounded-lg bg-white shadow-md';
+        title.className = 'semester-title';
         title.textContent = `Semestre ${semester}`;
         semesterColumn.appendChild(title);
 
@@ -159,10 +156,12 @@ function renderCurriculum() {
             card.setAttribute('data-course-code', course.code);
 
             // Clases base para la tarjeta
-            let cardClasses = 'course-card p-4 rounded-xl shadow-lg border-2 border-transparent hover:shadow-xl hover:scale-[1.02] text-sm';
+            let cardClasses = 'course-card'; 
             
             if (isPracticaLaboral) {
-                 cardClasses += ' practica-card text-center text-base';
+                 cardClasses += ' practica-card text-xs md:text-sm';
+            } else {
+                 cardClasses += ' text-xs md:text-sm';
             }
 
             card.className = cardClasses;
@@ -172,13 +171,11 @@ function renderCurriculum() {
             let isBlocked = false;
 
             if (isPracticaLaboral) {
-                // Check especial para Práctica Laboral
                 missingReqs = allCourseCodes.filter(code => !approvedCourses[code]);
                 if (missingReqs.length > 0) {
                     isBlocked = true;
                 }
             } else if (course.reqs.length > 0) {
-                // Check de requisitos normales
                 missingReqs = course.reqs.filter(reqCode => !approvedCourses[reqCode]);
                 if (missingReqs.length > 0) {
                     isBlocked = true;
@@ -188,27 +185,26 @@ function renderCurriculum() {
             // 2. Aplicar estados visuales
             if (isApproved) {
                 card.classList.add('approved');
-                card.innerHTML = `
-                    <p class="font-semibold text-base">${course.code}</p>
-                    <p class="text-xs">${course.name}</p>
-                    <span class="text-xs font-bold block mt-1">APROBADO</span>
-                `;
             } else if (isBlocked) {
                 card.classList.add('blocked');
                 card.setAttribute('data-missing-reqs', JSON.stringify(missingReqs));
-                // Contenido normal para ramos bloqueados
-                card.innerHTML = `
-                    <p class="font-semibold text-base">${course.code}</p>
-                    <p class="text-xs">${course.name}</p>
-                    <span class="text-xs font-bold block mt-1 text-red-500">BLOQUEADO</span>
-                `;
             } else {
-                 // Ramo disponible para aprobar
-                 card.innerHTML = `
-                    <p class="font-semibold text-base">${course.code}</p>
-                    <p class="text-xs text-gray-500">${course.name}</p>
-                `;
+                 // Ramo disponible - no requiere clase de estado
             }
+
+            // Contenido Minimalista: Mostramos el código y el nombre del ramo
+            let contentHTML = `
+                <p class="font-semibold">${course.code}</p>
+                <p class="text-xs text-gray-500">${course.name}</p>
+            `;
+            
+            // Si está aprobado, solo mostramos el nombre del curso con el estilo de aprobación (CSS se encarga del color)
+            if (isApproved) {
+                 contentHTML = `<p class="font-semibold">${course.name}</p>`;
+            }
+
+            card.innerHTML = contentHTML;
+
 
             // Asignar el listener de clic
             card.addEventListener('click', () => handleCourseClick(course.code));
