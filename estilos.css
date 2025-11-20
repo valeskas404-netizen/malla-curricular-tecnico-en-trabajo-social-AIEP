@@ -1,1 +1,87 @@
+/* Definición de la paleta de colores pastel (Fairycore suave en tonos rosas y morados) */
+:root {
+    --color-pastel-bg: #F7F2F6; /* Fondo principal muy claro (casi blanco con tinte lila) */
+    --color-pastel-header: #DBCDF0; /* Lavanda suave (Header) */
+    --color-pastel-card: #FFFAFA; /* Crema/Blanco muy claro (Ramo base) */
+    --color-pastel-approved: #F1D3D3; /* Rosa pálido suave (Aprobado) */
+    --color-pastel-blocked: #E0BBE4; /* Lila/Orquídea claro (Bloqueado) */
+    --color-text-main: #5A486F; /* Púrpura oscuro para legibilidad */
+}
 
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--color-pastel-bg);
+    color: var(--color-text-main);
+}
+
+/* Estilo para el encabezado */
+.header-bg {
+    background-color: var(--color-pastel-header);
+    color: var(--color-text-main);
+}
+
+/* Estilo para las tarjetas de cursos (ramos) */
+.course-card {
+    transition: all 0.3s ease-in-out;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05); /* Sombra suave */
+    border: 1px solid rgba(219, 205, 240, 0.5); /* Borde sutil del color del header */
+    background-color: var(--color-pastel-card);
+}
+
+/* Estado APROBADO */
+.approved {
+    background-color: var(--color-pastel-approved) !important;
+    color: #6B4E5E; /* Texto morado oscuro para contraste */
+    text-decoration: line-through;
+    opacity: 0.8;
+    pointer-events: none;
+    transform: scale(0.98);
+}
+
+/* Estado BLOQUEADO (Ramos que no cumplen requisitos) */
+.blocked {
+    background-color: var(--color-pastel-blocked) !important;
+    color: #8E44AD; /* Púrpura más vibrante para indicar bloqueo */
+    opacity: 0.9;
+    animation: pulse-blocked 1.5s infinite; 
+}
+
+@keyframes pulse-blocked {
+    /* Usando el color lila/morado para el pulso */
+    0% { box-shadow: 0 0 0 0 rgba(142, 68, 173, 0.2); }
+    70% { box-shadow: 0 0 0 5px rgba(142, 68, 173, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(142, 68, 173, 0); }
+}
+
+/* Estilos específicos para la Práctica Laboral */
+.practica-card {
+    background-color: #A36F8B; /* Malva más oscuro y elegante */
+    color: white;
+    font-weight: bold;
+}
+
+/* Estilos para el contenedor del mensaje de error/bloqueo */
+#message-box {
+    z-index: 50;
+    transition: opacity 0.3s, transform 0.3s;
+    transform: translateY(20px);
+    opacity: 0;
+    pointer-events: none;
+    /* Estilos por defecto del mensaje de bloqueo: Usando tonos rojos/rosas para el error */
+    background-color: #fff0f5; /* Más claro */
+    border-color: #ffc0cb; /* Rosa */
+}
+
+#message-box.show {
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* Estilos para las columnas de semestres */
+.semester-column {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
