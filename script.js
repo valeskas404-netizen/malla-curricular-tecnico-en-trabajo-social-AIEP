@@ -137,10 +137,10 @@ function renderCurriculum() {
         const semesterCourses = coursesBySemester[semester];
         
         const semesterColumn = document.createElement('div');
-        // Usamos la clase CSS 'semester-column' para la línea vertical
+        // Usamos la clase CSS 'semester-column' para el diseño de columna con separador
         semesterColumn.className = 'semester-column'; 
         
-        // Título del Semestre: Usamos 'semester-title' para el borde inferior
+        // Título del Semestre: Usamos 'semester-title' para el estilo del recuadro del título
         const title = document.createElement('h2');
         title.className = 'semester-title';
         title.textContent = `Semestre ${semester}`;
@@ -155,13 +155,11 @@ function renderCurriculum() {
             card.id = `course-${course.code}`;
             card.setAttribute('data-course-code', course.code);
 
-            // Clases base para la tarjeta
-            let cardClasses = 'course-card'; 
+            // Clases base para la tarjeta: p-2 (padding muy pequeño) y texto pequeño
+            let cardClasses = 'course-card text-sm'; 
             
             if (isPracticaLaboral) {
-                 cardClasses += ' practica-card text-xs md:text-sm';
-            } else {
-                 cardClasses += ' text-xs md:text-sm';
+                 cardClasses += ' practica-card text-center text-sm md:text-base';
             }
 
             card.className = cardClasses;
@@ -183,27 +181,31 @@ function renderCurriculum() {
             }
             
             // 2. Aplicar estados visuales
+            const codeTextSize = isPracticaLaboral ? 'text-base' : 'text-sm';
+            const nameTextSize = isPracticaLaboral ? 'text-sm' : 'text-xs';
+
+
             if (isApproved) {
                 card.classList.add('approved');
+                card.innerHTML = `
+                    <p class="font-semibold ${codeTextSize}">${course.code}</p>
+                    <p class="${nameTextSize}">${course.name}</p>
+                    <span class="text-xs font-bold block mt-1">APROBADO</span>
+                `;
             } else if (isBlocked) {
                 card.classList.add('blocked');
                 card.setAttribute('data-missing-reqs', JSON.stringify(missingReqs));
+                 card.innerHTML = `
+                    <p class="font-semibold ${codeTextSize}">${course.code}</p>
+                    <p class="${nameTextSize}">${course.name}</p>
+                    <span class="text-xs font-bold block mt-1">BLOQUEADO</span>
+                `;
             } else {
-                 // Ramo disponible - no requiere clase de estado
+                 card.innerHTML = `
+                    <p class="font-semibold ${codeTextSize}">${course.code}</p>
+                    <p class="${nameTextSize} text-gray-500">${course.name}</p>
+                `;
             }
-
-            // Contenido Minimalista: Mostramos el código y el nombre del ramo
-            let contentHTML = `
-                <p class="font-semibold">${course.code}</p>
-                <p class="text-xs text-gray-500">${course.name}</p>
-            `;
-            
-            // Si está aprobado, solo mostramos el nombre del curso con el estilo de aprobación (CSS se encarga del color)
-            if (isApproved) {
-                 contentHTML = `<p class="font-semibold">${course.name}</p>`;
-            }
-
-            card.innerHTML = contentHTML;
 
 
             // Asignar el listener de clic
