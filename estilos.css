@@ -4,8 +4,11 @@
     --color-pastel-header: #DBCDF0; /* Lavanda suave (Header) */
     --color-text-main: #5A486F; /* Púrpura oscuro para legibilidad */
     --color-line: #E0BBE4; /* Lila/Orquídea claro para las líneas */
-    --color-approved-text: #A36F8B; /* Malva oscuro para aprobados */
-    --color-blocked-text: #8E44AD; /* Púrpura más vibrante para bloqueo */
+    --color-card-bg: #FFFFFF; /* Fondo de la tarjeta */
+    --color-approved: #F1D3D3; /* Rosa pálido suave (Aprobado) */
+    --color-approved-text: #6B4E5E; 
+    --color-blocked-bg: #F8BBD0; /* Rosa fuerte para destacar */
+    --color-blocked-text: #C2185B;
 }
 
 body {
@@ -20,116 +23,83 @@ body {
     color: var(--color-text-main);
 }
 
-/* --- Estilo de Malla Vertical (Similar a la imagen) --- */
+/* --- Estilo de Malla Card-based (Compacto) --- */
 
 /* Contenedor de cada columna de semestre */
 .semester-column {
     display: flex;
     flex-direction: column;
-    /* Eliminar el espacio interno entre ramos para que estén pegados a la línea */
-    gap: 0; 
+    /* Espacio entre los ramos dentro de una columna */
+    gap: 0.75rem; /* Espacio pequeño para mantener la compacidad */
     position: relative;
-    padding-top: 1rem; /* Espacio para el título del semestre */
+    
+    /* Línea divisoria vertical entre semestres */
+    border-right: 1px solid var(--color-line); 
+    padding-right: 0.75rem; /* Espacio antes del borde */
 }
 
-/* Título del Semestre: Borde inferior para separar del cuerpo */
+/* Eliminar el borde derecho en la última columna de la cuadrícula */
+#curriculum-grid > .semester-column:last-child {
+    border-right: none;
+    padding-right: 0;
+}
+
+
+/* Título del Semestre: Sutil y centrado */
 .semester-title {
     text-align: center;
-    padding: 0 0 1rem 0; 
+    padding: 0.5rem;
     font-size: 1rem; 
     font-weight: 700;
     color: var(--color-text-main);
-    border-bottom: 2px solid var(--color-line);
     margin-bottom: 0.5rem;
+    background-color: var(--color-card-bg); 
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
-/* --- Estilo de la Tarjeta (Ramo) como línea/lista --- */
+/* Estilo para las tarjetas de cursos (ramos) */
 .course-card {
     transition: all 0.2s ease-in-out;
     cursor: pointer;
-    background-color: transparent; /* Fondo transparente */
-    padding: 0.5rem 0.5rem 0.5rem 1rem; /* Padding a la izquierda para el efecto de línea */
-    position: relative;
-    border-radius: 0;
-    box-shadow: none;
-    line-height: 1.2;
+    /* Fondo y borde para el recuadro */
+    background-color: var(--color-card-bg); 
+    border: 1px solid rgba(219, 205, 240, 0.5); /* Borde suave */
+    border-radius: 0.5rem;
+    padding: 0.5rem; /* Padding pequeño para compacidad */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
-/* Línea Vertical (Se crea con un pseudo-elemento en el contenedor del semestre) */
-.semester-column::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 50%; /* Centrar la línea vertical en la columna */
-    bottom: 0;
-    width: 2px; /* Grosor de la línea */
-    background-color: var(--color-line);
-    z-index: 1; /* Asegurar que la línea esté debajo de los ramos */
+/* Hover: Mantiene el efecto visual */
+.course-card:not(.approved):not(.blocked):hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
 }
-
-/* Pequeña marca horizontal al inicio de cada ramo (El "tick" en la línea) */
-.course-card::before {
-    content: '';
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    width: 8px; /* Tamaño del punto/marca */
-    height: 8px;
-    background-color: var(--color-line);
-    border-radius: 50%;
-    z-index: 2; /* Sobre la línea vertical */
-    transition: background-color 0.2s;
-}
-
-/* --- ESTADOS --- */
 
 /* Estado APROBADO */
 .approved {
-    color: var(--color-approved-text) !important;
-    text-decoration: none; /* Mantener la decoración limpia, pero cambiar el color */
-    opacity: 1;
+    background-color: var(--color-approved) !important;
+    color: var(--color-approved-text);
+    text-decoration: none; 
+    opacity: 0.9;
     pointer-events: none;
     transform: none;
-    font-weight: 600; /* Ligeramente más grueso para destacar */
-}
-
-.approved::before {
-    background-color: var(--color-approved-text);
-    /* Borde blanco para darle un efecto de "check" sutil */
-    border: 2px solid var(--color-pastel-bg);
-    width: 10px;
-    height: 10px;
 }
 
 /* Estado BLOQUEADO */
 .blocked {
-    color: var(--color-blocked-text) !important;
-    opacity: 0.8;
-    pointer-events: auto; /* Permitir el click para mostrar el mensaje */
-    animation: none; /* Eliminar animación de pulso */
+    background-color: var(--color-blocked-bg) !important; 
+    color: var(--color-blocked-text);
+    opacity: 0.9;
+    /* Sombra para destacar visualmente el bloqueo */
+    box-shadow: 0 0 0 2px var(--color-blocked-text); 
 }
 
-.blocked::before {
-    background-color: var(--color-blocked-text);
-}
-
-/* Estado Normal (Disponible) */
-.course-card:not(.approved):not(.blocked):hover {
-    background-color: rgba(219, 205, 240, 0.2); /* Lavanda muy suave al pasar el ratón */
-    transform: translateX(3px);
-}
-.course-card:not(.approved):not(.blocked):active {
-    background-color: rgba(219, 205, 240, 0.4);
-}
-
-/* Estilos específicos para la Práctica Laboral (Misma lógica, pero con color de línea distinto) */
+/* Estilos específicos para la Práctica Laboral */
 .practica-card {
-    color: #A36F8B; 
-    font-weight: bold;
-}
-.practica-card::before {
     background-color: #A36F8B;
+    color: white;
+    font-weight: bold;
 }
 
 /* Estilos para el mensaje de bloqueo */
